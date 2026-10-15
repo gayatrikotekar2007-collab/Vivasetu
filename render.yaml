@@ -1,0 +1,39 @@
+services:
+  - type: postgres
+    name: vivasetu-db
+    plan: free
+    ipAllowList: []
+
+  - type: web
+    name: vivasetu-backend
+    runtime: docker
+    plan: free
+    rootDir: ./backend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET_KEY
+        sync: false
+      - key: ADMIN_SECRET
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        value: https://your-render-frontend-url.onrender.com
+      - key: AI_REQUEST_TIMEOUT_SECONDS
+        value: "30"
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "30"
+
+  - type: web
+    name: vivasetu-frontend
+    runtime: static
+    plan: free
+    rootDir: ./frontend
+    buildCommand: npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        sync: false
